@@ -15,6 +15,12 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    // action that shows the change password form
+    public function showChangePasswordForm()
+    {
+        return view('auth.change-password');
+    }
+
     // action that shows the login form
     public function showLoginForm()
     {
@@ -49,15 +55,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // Validate the request data
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
         // Attempt to log the user in
-        if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
             // Redirect to the home page
-            return redirect()->route('bookmarks.index');
+            // return redirect()->route('bookmarks.index');
+            return redirect()->intended('bookmarks.index');
         }
 
         // If login fails, redirect back with an error message
@@ -71,5 +80,33 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('bookmarks.index');
+    }
+
+    public function changePassword(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Check if the current password matches
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors([
+                'current_password' => __('The current password is incorrect.'),
+            ]);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Redirect back with a success message
+        return
+            redirect()
+            ->route('bookmarks.index')
+            ->with('success', __('Password changed successfully!'));
     }
 }

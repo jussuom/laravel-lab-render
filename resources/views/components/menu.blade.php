@@ -4,6 +4,7 @@
         <x-menu-item title="{{ __('Categories') }}" targetRoute="categories.index" />
         <x-menu-item title="{{ __('Add Bookmark') }}" targetRoute="bookmarks.create" />
         <x-menu-item title="{{ __('Add Category') }}" targetRoute="categories.create" />
+        <x-menu-item title="{{ __('Change Password') }}" targetRoute="auth.showChangePasswordForm" />
         <x-menu-item title="{{ __('Logout') }}" targetRoute="auth.logout" />
     @endauth
     {{-- @guest

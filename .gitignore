@@ -10,3 +10,4 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 storage/logs/laravel-2025-10-28.log
+/storage/logs
